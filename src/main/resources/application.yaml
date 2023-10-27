@@ -1,0 +1,25 @@
+logging:
+    level:
+        root: info
+#messageUtil:
+#    opCode:
+#        "0": "服务端进行消息推送"
+#        "1": "客户端或服务端发送心跳"
+#        "2": "客户端发送鉴权"
+#        "6": "客户端恢复连接"
+#        "7": "服务端通知客户端重新连接"
+#        "9": " identify 或 resume ，参数有误"
+#        "10": "hello"
+#        "11": "心跳成功"
+#        "12": "机器人收到消息"
+robot:
+    appId: "102071706"
+    token:  "IyR82xXaf6sA24LkDtIU4abw0yA1DjDl"
+    clientSecret: "Y0UmrmTXYR6d6QWN"
+    intents: 513
+spark:
+    hostUrl: "https://spark-api.xf-yun.com/v1.1/chat"
+    apiKey: "93517e5e21d7eb0f734dcb5dd946f109"
+    apiSecret: "ODM0MDhlOTE0MjcwNDBlYTUwZmExNjM0"
+    appId: "d2f02e80"
+    domain: "general"
