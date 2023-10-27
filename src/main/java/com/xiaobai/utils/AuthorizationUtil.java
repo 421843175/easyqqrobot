@@ -52,11 +52,11 @@ public class AuthorizationUtil {
      * 'X-Union-Appid': "{BOT_APPID}",
      * }
      */
-    public static void getQQWSClient() throws URISyntaxException {
+    public static void getQQWSClient(String botId) throws URISyntaxException {
         String url = BaseVar.BASE_URL + BaseVar.GATEWAY_URL;
         Header[] headers = new Header[2];
         headers[0] = new BasicHeader("Authorization", "QQBot " + BaseVar.token);
-        headers[1] = new BasicHeader("X-Union-Appid", "102071706");
+        headers[1] = new BasicHeader("X-Union-Appid", botId);
         url = (String) HttpUtil.executeRequest(url, HttpMethod.GET, null, headers).get("url");
 
         if(Strings.isBlank(url)){

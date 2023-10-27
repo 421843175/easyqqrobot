@@ -36,7 +36,7 @@ public class QQWebSocketClient extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        Map<String, Object> map = MessageUtil.parsePaylod(message);
+        Map<String, Object> map = MessageUtil.parseQQPaylod(message);
         if(Objects.nonNull(map)){
             log.info("回调结果:{}",map);
             if(map.containsKey("arg")){
@@ -93,15 +93,14 @@ public class QQWebSocketClient extends WebSocketClient {
                 log.info("重连成功");
 
 
-                Map<String,Object> map = new HashMap<>();
+                /*Map<String,Object> map = new HashMap<>();
                 map.put("token",BaseVar.token);
                 map.put("session_id",BaseVar.sessionID);
                 map.put("seq",BaseVar.finalMessageID);
 
 
                 Payload payload = new Payload(6,map);
-                webSocketClient.send(JSONObject.toJSONString(payload));
-
+                webSocketClient.send(JSONObject.toJSONString(payload));*/
 
             }
         }

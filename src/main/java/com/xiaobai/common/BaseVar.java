@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BaseVar {
     public static String token = null;
+    public volatile static boolean sparkFlag = false;
     public static String heartbeatInterval = null;
     public static String finalMessageID = null;
     public static String sessionID = null;

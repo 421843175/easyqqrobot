@@ -37,7 +37,7 @@ public class MessageUtil {
     }
 
 
-    public static Map<String, Object> parsePaylod(String message) {
+    public static Map<String, Object> parseQQPaylod(String message) {
         Payload payload = JSONObject.parseObject(message, Payload.class);
         Map<String, Object> map = new HashMap<>();
 
@@ -78,6 +78,7 @@ public class MessageUtil {
 
 
         if (op == 0) {
+
             if ("READY".equals(payload.getT())) {
                 map.put("arg", "keepAlive");
                 BaseVar.sessionID = String.valueOf(JSONObject
@@ -87,12 +88,14 @@ public class MessageUtil {
             }
 
             Message m = JSONObject.parseObject(payload.getD().toString(), Message.class);
+
             if (Objects.isNull(m)) {
                 return null;
             }
             if (Objects.nonNull(m.getMentions()) && Arrays.stream(m.getMentions()).anyMatch(User::isBot)) {
+                log.info("{}",m);
                 HttpUtil.executeRequest(
-                        BaseVar.LOCAL_URL + "/guild/channel",
+                        BaseVar.LOCAL_URL + "/router",
                         HttpMethod.POST,
                         JSONObject.parseObject(payload.getD().toString())
                 );

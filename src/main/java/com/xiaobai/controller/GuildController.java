@@ -25,7 +25,8 @@ public class GuildController {
      * 文字子频道
      */
     @RequestMapping("/channel")
-    public void channel(@RequestBody Message message){
+    public void channel(HttpServletRequest request){
+        Message message = (Message) request.getAttribute("message");
 
         guildService.channel(message);
     }

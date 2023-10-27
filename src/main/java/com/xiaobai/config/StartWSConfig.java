@@ -26,6 +26,6 @@ public class StartWSConfig implements ApplicationRunner {
 
 
 
-        AuthorizationUtil.getQQWSClient();
+        AuthorizationUtil.getQQWSClient(robotInfo.getAppId());
     }
 }

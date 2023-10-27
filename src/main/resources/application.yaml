@@ -16,6 +16,8 @@ robot:
     appId: "102071706"
     token:  "IyR82xXaf6sA24LkDtIU4abw0yA1DjDl"
     clientSecret: "Y0UmrmTXYR6d6QWN"
+    #机器人回答长度
+    answerLength: 500
     intents: 513
 spark:
     hostUrl: "https://spark-api.xf-yun.com/v1.1/chat"

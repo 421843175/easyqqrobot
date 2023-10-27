@@ -26,6 +26,7 @@ public class SparkWebSocketClient extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
         log.info("连接上星火大模型啦");
+        BaseVar.sparkFlag = true;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.xiaobai.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xiaobai.common.BaseVar;
+import com.xiaobai.common.RobotInfo;
 import com.xiaobai.common.SparkInfo;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.pojo.qqRobot.MessageReference;
@@ -23,54 +24,71 @@ import java.util.Map;
  * @date 2023/10/23-23:20
  */
 @Service
-public class GuildService{
+public class GuildService {
 
     @Autowired
     SparkInfo sparkInfo;
+
+    @Autowired
+    RobotInfo robotInfo;
 
     public void channel(Message message) {
         try {
             WebSocketClient sparkWSClient = AuthorizationUtil.getSparkWSClient(sparkInfo.getHostUrl(), sparkInfo.getApiKey(), sparkInfo.getApiSecret());
             sparkWSClient.connect();
             Thread.sleep(200);
-            Map<String, Object> map = MessageUtil.buildSparkParam(sparkInfo.getAppId(),
-                    message.getAuthor().getId(),
-                    message.getContent().replace("<@!13224066619675576179>", "").trim(),
-                    sparkInfo.getDomain());
 
-
-
-            String sparkParam = JSONObject.toJSONString(map);
-
-            sparkWSClient.send(sparkParam);
-            while (true){
-                Thread.sleep(200);
-                if(Strings.isNotBlank(BaseVar.sparkMessage)){
-                    break;
+            do {
+                if (BaseVar.sparkFlag) {
+                    Map<String, Object> map = MessageUtil.buildSparkParam(sparkInfo.getAppId(),
+                            message.getAuthor().getId(),
+                            message.getContent().replace("<@!.*?>", "").trim(),
+                            sparkInfo.getDomain());
+                    String sparkParam = JSONObject.toJSONString(map);
+                    sparkWSClient.send(sparkParam);
+                    BaseVar.sparkFlag = false;
                 }
-            }
+            } while (Strings.isBlank(BaseVar.sparkMessage));
             sparkWSClient.close(1000, "");
 
             Header[] headers = new Header[2];
             headers[0] = new BasicHeader("Authorization", "QQBot " + BaseVar.token);
-            headers[1] = new BasicHeader("X-Union-Appid", "102071706");
+            headers[1] = new BasicHeader("X-Union-Appid", robotInfo.getAppId());
 
-            JSONObject param = new JSONObject();
+            Integer answerLength = robotInfo.getAnswerLength();
 
-            param.put("content",BaseVar.sparkMessage);
-            MessageReference messageReference = new MessageReference();
-            messageReference.setMessage_id(message.getId());
-            param.put("message_reference",messageReference);
-            param.put("msg_id",message.getId());
-            param.put("msg_type",0);
-            param.put("timestamp",(int)System.currentTimeMillis()/1000);
+            if (BaseVar.sparkMessage.length() > answerLength) {
+                int index = BaseVar.sparkMessage.length() / answerLength;
+                int i = 0;
+                String answer;
+                while (i++ <= index) {
+                    if (i > index) {
+                        answer = BaseVar.sparkMessage.substring(answerLength * index);
+                    } else {
+                        answer = BaseVar.sparkMessage.substring(answerLength * (i - 1), answerLength * i);
+                    }
 
-            HttpUtil.executeRequest(
-                    BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages",
-                    HttpMethod.POST,
-                    param,
-                    headers
-            );
+                    JSONObject param = new JSONObject();
+                    if (i == 1) {
+                        answer = "<@!" + message.getAuthor().getId() + ">" + answer;
+                        //引用消息
+                        MessageReference messageReference = new MessageReference();
+                        messageReference.setMessage_id(message.getId());
+                        param.put("message_reference", messageReference);
+                    }
+
+
+                    param.put("content", answer);
+                    param.put("msg_id", message.getId());
+
+                    HttpUtil.executeRequest(
+                            BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages",
+                            HttpMethod.POST,
+                            param,
+                            headers
+                    );
+                }
+            }
 
             BaseVar.sparkMessage = null;
         } catch (Exception e) {
@@ -78,7 +96,6 @@ public class GuildService{
         }
 
 
-
-
     }
+
 }

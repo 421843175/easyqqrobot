@@ -21,11 +21,12 @@ public class IndexController {
     @RequestMapping("/router")
     public String router(@RequestBody Message message, HttpServletRequest request) throws IOException {
         StringBuilder url = new StringBuilder();
-        log.info("路由控制器\n{}",message);
+        log.info("路由控制器");
         if(message.getChannel_id()!=null){
             url.append("/guild").append("/channel");
         }
-        System.out.println(request.getReader().readLine());
+
+        request.setAttribute("message",message);
 
         return "forward:" + url;
     }
