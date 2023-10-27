@@ -26,17 +26,20 @@ import java.util.Map;
 @Service
 public class GuildService {
 
-    @Autowired
-    SparkInfo sparkInfo;
+    final SparkInfo sparkInfo;
+
+    final RobotInfo robotInfo;
 
     @Autowired
-    RobotInfo robotInfo;
+    public GuildService(RobotInfo robotInfo, SparkInfo sparkInfo) {
+        this.robotInfo = robotInfo;
+        this.sparkInfo = sparkInfo;
+    }
 
     public void channel(Message message) {
         try {
             WebSocketClient sparkWSClient = AuthorizationUtil.getSparkWSClient(sparkInfo.getHostUrl(), sparkInfo.getApiKey(), sparkInfo.getApiSecret());
             sparkWSClient.connect();
-            Thread.sleep(200);
 
             do {
                 if (BaseVar.sparkFlag) {
@@ -49,6 +52,7 @@ public class GuildService {
                     BaseVar.sparkFlag = false;
                 }
             } while (Strings.isBlank(BaseVar.sparkMessage));
+
             sparkWSClient.close(1000, "");
 
             Header[] headers = new Header[2];
@@ -70,7 +74,7 @@ public class GuildService {
 
                     JSONObject param = new JSONObject();
                     if (i == 1) {
-                        answer = "<@!" + message.getAuthor().getId() + ">" + answer;
+                        answer = "<@!" + message.getAuthor().getId() + ">\n" + answer;
                         //引用消息
                         MessageReference messageReference = new MessageReference();
                         messageReference.setMessage_id(message.getId());
@@ -88,6 +92,25 @@ public class GuildService {
                             headers
                     );
                 }
+            }else {
+                JSONObject param = new JSONObject();
+                StringBuilder builder = new StringBuilder("<@!" + message.getAuthor().getId() + ">\n");
+
+
+                param.put("msg_id", message.getId());
+                builder.append(BaseVar.sparkMessage);
+                //引用消息
+                param.put("content", builder.toString());
+                MessageReference messageReference = new MessageReference();
+                messageReference.setMessage_id(message.getId());
+                param.put("message_reference", messageReference);
+
+                HttpUtil.executeRequest(
+                        BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages",
+                        HttpMethod.POST,
+                        param,
+                        headers
+                );
             }
 
             BaseVar.sparkMessage = null;
