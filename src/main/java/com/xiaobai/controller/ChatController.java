@@ -1,15 +1,12 @@
 package com.xiaobai.controller;
 
 import com.xiaobai.pojo.qqRobot.Message;
-import com.xiaobai.service.GuildService;
+import com.xiaobai.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 /**
  * @author xiaobai
@@ -17,18 +14,17 @@ import java.io.IOException;
  */
 
 @RestController
-@RequestMapping("/guild")
-public class GuildController {
+@RequestMapping("/chat")
+public class ChatController {
     @Autowired
-    private GuildService guildService;
+    private ChatService chatService;
     /**
      * 文字子频道
      */
-    @RequestMapping("/channel")
+    @RequestMapping
     public void channel(HttpServletRequest request){
         Message message = (Message) request.getAttribute("message");
-
-        guildService.channel(message);
+        chatService.channel(message);
     }
 
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xiaobai.common.BaseVar;
+import com.xiaobai.dto.MessageDto;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.pojo.qqRobot.Payload;
 import com.xiaobai.pojo.qqRobot.User;
@@ -74,6 +75,7 @@ public class MessageUtil {
         }
         if (op == 9) {
             log.info("请求参数异常");
+            log.info("{}",message);
         }
 
 
@@ -81,23 +83,25 @@ public class MessageUtil {
 
             if ("READY".equals(payload.getT())) {
                 map.put("arg", "keepAlive");
-                BaseVar.sessionID = String.valueOf(JSONObject
+                BaseVar.sessionID = String.valueOf(
+                        JSONObject
                         .parseObject(payload.getD().toString())
-                        .get("session_id"));
+                        .get("session_id")
+                );
                 return map;
             }
 
-            Message m = JSONObject.parseObject(payload.getD().toString(), Message.class);
-
-            if (Objects.isNull(m)) {
+            MessageDto messageDto = JSONObject.parseObject(payload.getD().toString(), MessageDto.class);
+            if (Objects.isNull(messageDto)) {
                 return null;
             }
-            if (Objects.nonNull(m.getMentions()) && Arrays.stream(m.getMentions()).anyMatch(User::isBot)) {
-                log.info("{}",m);
+            if (Objects.nonNull(messageDto.getMentions())
+                    && Arrays.stream(messageDto.getMentions()).anyMatch(User::isBot)) {
+                log.info("{}",messageDto);
                 HttpUtil.executeRequest(
                         BaseVar.LOCAL_URL + "/router",
                         HttpMethod.POST,
-                        JSONObject.parseObject(payload.getD().toString())
+                        (JSONObject) JSONObject.toJSON(messageDto)
                 );
             }
         }

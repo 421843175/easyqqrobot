@@ -24,14 +24,14 @@ import java.util.Map;
  * @date 2023/10/23-23:20
  */
 @Service
-public class GuildService {
+public class ChatService {
 
     final SparkInfo sparkInfo;
 
     final RobotInfo robotInfo;
 
     @Autowired
-    public GuildService(RobotInfo robotInfo, SparkInfo sparkInfo) {
+    public ChatService(RobotInfo robotInfo, SparkInfo sparkInfo) {
         this.robotInfo = robotInfo;
         this.sparkInfo = sparkInfo;
     }
@@ -45,7 +45,7 @@ public class GuildService {
                 if (BaseVar.sparkFlag) {
                     Map<String, Object> map = MessageUtil.buildSparkParam(sparkInfo.getAppId(),
                             message.getAuthor().getId(),
-                            message.getContent().replace("<@!.*?>", "").trim(),
+                            message.getContent().replaceAll("<@!.*?>", "").trim(),
                             sparkInfo.getDomain());
                     String sparkParam = JSONObject.toJSONString(map);
                     sparkWSClient.send(sparkParam);
@@ -58,6 +58,16 @@ public class GuildService {
             Header[] headers = new Header[2];
             headers[0] = new BasicHeader("Authorization", "QQBot " + BaseVar.token);
             headers[1] = new BasicHeader("X-Union-Appid", robotInfo.getAppId());
+
+            String targetUrl;
+            //判断是群聊还是频道
+            if (Strings.isBlank(message.getChannel_id())){
+                targetUrl = BaseVar.BASE_URL + "/v2/groups/" + message.getGroup_openid() + "/messages";
+            }else {
+                targetUrl = BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages";
+            }
+
+
 
             Integer answerLength = robotInfo.getAnswerLength();
 
@@ -86,7 +96,7 @@ public class GuildService {
                     param.put("msg_id", message.getId());
 
                     HttpUtil.executeRequest(
-                            BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages",
+                            targetUrl,
                             HttpMethod.POST,
                             param,
                             headers
@@ -106,7 +116,7 @@ public class GuildService {
                 param.put("message_reference", messageReference);
 
                 HttpUtil.executeRequest(
-                        BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages",
+                        targetUrl,
                         HttpMethod.POST,
                         param,
                         headers
@@ -114,6 +124,7 @@ public class GuildService {
             }
 
             BaseVar.sparkMessage = null;
+            BaseVar.curMode = null;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

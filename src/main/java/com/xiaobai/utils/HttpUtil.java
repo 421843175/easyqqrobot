@@ -64,6 +64,7 @@ public class HttpUtil {
             }
             //7. 转换成实体类
             HttpEntity entity = response.getEntity();
+
             if (null != entity) {
                 return JSONObject.parseObject(EntityUtils.toString(entity, "UTF-8"));
             }
@@ -94,11 +95,8 @@ public class HttpUtil {
         return null;
     }
 
-    public static Map<String, Object> executeRequest(String url, HttpMethod method, JSONObject params) {
-        return executeRequest(url, method, params, null);
-    }
 
     public static Map<String, Object> executeRequest(String url, HttpMethod method) {
-        return executeRequest(url, method, null, null);
+        return executeRequest(url, method, null);
     }
 }
