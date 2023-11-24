@@ -19,4 +19,7 @@ public class User {
     private boolean bot;
     private String union_openid;
     private String union_user_account;
+
+    //群聊
+    private String member_openid;
 }

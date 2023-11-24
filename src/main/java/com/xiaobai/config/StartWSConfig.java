@@ -1,8 +1,11 @@
 package com.xiaobai.config;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xiaobai.common.BaseVar;
 import com.xiaobai.common.RobotInfo;
 import com.xiaobai.utils.AuthorizationUtil;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -24,6 +27,10 @@ public class StartWSConfig implements ApplicationRunner {
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
         AuthorizationUtil.getToken(jsonObject);
 
+        robotInfo.setHeaders(new Header[]{
+                new BasicHeader("Authorization", "QQBot " + BaseVar.token),
+                new BasicHeader("X-Union-Appid", robotInfo.getAppId())
+        });
 
 
         AuthorizationUtil.getQQWSClient(robotInfo.getAppId());

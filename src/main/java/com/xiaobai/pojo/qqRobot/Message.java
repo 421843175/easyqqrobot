@@ -24,6 +24,7 @@ public class Message {
      * 子频道id
      */
     private String channel_id;
+
     /**
      * 频道id
      */
@@ -84,6 +85,13 @@ public class Message {
      * 用于私信场景下识别真实的来源频道id
      */
     private String src_guild_id;
+
+    //群聊
+    /**
+     * 群聊id
+     */
+    private String group_id;
+    private String group_openid;
 
     @Override
     public String toString() {

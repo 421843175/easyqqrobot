@@ -37,10 +37,10 @@ public class AuthorizationUtil {
      * }
      */
     public static void getToken(JSONObject param) {
-        BaseVar.token = (String) HttpUtil.executeRequest(
-                BaseVar.TOKEN_URL,
-                HttpMethod.POST,
-                param)
+        BaseVar.token = (String) Objects.requireNonNull(HttpUtil.executeRequest(
+                        BaseVar.TOKEN_URL,
+                        HttpMethod.POST,
+                        param))
                 .get("access_token");
     }
 
