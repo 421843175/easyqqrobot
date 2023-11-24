@@ -58,7 +58,7 @@ public class GameController {
 
 
         if ("退出游戏".equals(message.getContent())) {
-            param.put("content", "游戏模式已退出");
+            builder.append("游戏模式已退出");
             BaseVar.curMode = null;
         } else if (gameName.containsKey(message.getContent())) {
             BaseVar.gameMode = gameName.get(message.getContent());
@@ -99,7 +99,7 @@ public class GameController {
 
 
         if ("返回菜单".equals(message.getContent())) {
-            param.put("content", "精灵大陆已退出");
+            content = "精灵大陆已退出";
             BaseVar.gameMode = null;
         } else if("菜单".equals(message.getContent())){
             StringBuilder builder = new StringBuilder();
