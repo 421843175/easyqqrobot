@@ -11,7 +11,8 @@ import lombok.ToString;
 public enum RobotMode {
     CHAT("/chat"),
     GAME("/game"),
-    TEST("/test");
+    TEST("/test"),
+    NOTE("/note");
 
     final String mode;
 

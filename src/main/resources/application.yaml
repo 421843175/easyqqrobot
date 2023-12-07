@@ -13,15 +13,16 @@ logging:
 #        "11": "心跳成功"
 #        "12": "机器人收到消息"
 robot:
-    appId: ""
-    token:  ""
-    clientSecret: ""
+    appId: "102071706"
+    token:  "IyR82xXaf6sA24LkDtIU4abw0yA1DjDl"
+    clientSecret: "Y0UmrmTXYR6d6QWN"
     #机器人回答长度
     answerLength: 500
-    intents: 513
+    intents: 1107296256
 spark:
-    hostUrl: "https://spark-api.xf-yun.com/v1.1/chat"
-    apiKey: ""
-    apiSecret: ""
-    appId: ""
-    domain: "general"
+    hostUrl: "https://spark-api.xf-yun.com/v2.1/chat"
+    apiKey: "93517e5e21d7eb0f734dcb5dd946f109"
+    apiSecret: "ODM0MDhlOTE0MjcwNDBlYTUwZmExNjM0"
+    appId: "d2f02e80"
+    domain: "generalv2"
+

@@ -95,8 +95,7 @@ public class MessageUtil {
             if (Objects.isNull(messageDto)) {
                 return null;
             }
-            if (Objects.nonNull(messageDto.getMentions())
-                    && Arrays.stream(messageDto.getMentions()).anyMatch(User::isBot)) {
+            if (Objects.nonNull(messageDto.getContent())) {
                 log.info("{}",messageDto);
                 HttpUtil.executeRequest(
                         BaseVar.LOCAL_URL + "/router",
@@ -149,5 +148,15 @@ public class MessageUtil {
         requestJson.put("payload", payload);
 
         return requestJson;
+    }
+
+    public static String buildTargetUrl(Message message){
+        String targetUrl;
+        if (Strings.isBlank(message.getChannel_id())){
+            targetUrl = BaseVar.BASE_URL + "/v2/groups/" + message.getGroup_openid() + "/messages";
+        }else {
+            targetUrl = BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages";
+        }
+        return targetUrl;
     }
 }

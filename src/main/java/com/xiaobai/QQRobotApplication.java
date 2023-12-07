@@ -14,7 +14,6 @@ public class QQRobotApplication {
 
     public static void main(String[] args) throws URISyntaxException {
         SpringApplication.run(QQRobotApplication.class, args);
-
     }
 
 }

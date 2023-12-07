@@ -60,4 +60,8 @@ public class RobotService {
         return JSONObject.toJSONString(payload);
     }
 
+    public static void main(String[] args) {
+        System.out.println(1<<30|1<<25);
+    }
+
 }

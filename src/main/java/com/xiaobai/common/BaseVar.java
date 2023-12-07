@@ -18,8 +18,8 @@ public class BaseVar {
     /**
      *机器人模式
      */
-    public static RobotMode curMode = RobotMode.GAME;
-    public static GameMode gameMode = GameMode.JLDL;
+    public static RobotMode curMode = null;
+    public static GameMode gameMode = null;
 
 
     public volatile static String sparkMessage = null;

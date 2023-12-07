@@ -7,6 +7,7 @@ import com.xiaobai.common.RobotMode;
 import com.xiaobai.dto.MessageDto;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.utils.HttpUtil;
+import com.xiaobai.utils.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map.Entry;
 
 
 /**
@@ -49,14 +51,16 @@ public class IndexController {
             url.append(BaseVar.curMode.getMode());
             if(BaseVar.gameMode != null){
                 JSONObject game = JSONObject.parseObject(BaseVar.gameMode.getGame());
-                for (String s : game.keySet()) {
-                    url.append(game.get(s));
+                for (Entry<String,Object> s : game.entrySet()) {
+                    url.append(s.getValue());
                 }
 
             }
 
             return "forward:" + url;
         }
+
+        String targetUrl = MessageUtil.buildTargetUrl(message);
 
 
         String mode = message.getContent().split(" ")[0];
@@ -81,7 +85,7 @@ public class IndexController {
             param.put("msg_id", message.getId());
 
             HttpUtil.executeRequest(
-                    BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages",
+                    targetUrl,
                     HttpMethod.POST,
                     param,
                     headers

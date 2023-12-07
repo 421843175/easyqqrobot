@@ -7,8 +7,10 @@ import com.xiaobai.common.RobotInfo;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.service.JldlService;
 import com.xiaobai.utils.HttpUtil;
+import com.xiaobai.utils.MessageUtil;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,18 +54,21 @@ public class GameController {
 
     @RequestMapping
     public void start(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+
         JSONObject param = new JSONObject();
         StringBuilder builder = new StringBuilder();
         Message message = (Message) request.getAttribute("message");
 
+        String targetUrl = MessageUtil.buildTargetUrl(message);
 
         if ("退出游戏".equals(message.getContent())) {
             builder.append("游戏模式已退出");
             BaseVar.curMode = null;
         } else if (gameName.containsKey(message.getContent())) {
             BaseVar.gameMode = gameName.get(message.getContent());
-            builder.append(message.getContent()).append("已开始");
-            builder.append("发送”查看菜单");
+            builder.append(message.getContent()).append("已开始\n");
+            builder.append("发送“菜单”");
         } else {
 
             for (String s : gameName.keySet()) {
@@ -82,7 +87,7 @@ public class GameController {
         param.put("msg_id", message.getId());
 
         HttpUtil.executeRequest(
-                BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages",
+                targetUrl,
                 HttpMethod.POST,
                 param,
                 robotInfo.getHeaders());
@@ -96,6 +101,7 @@ public class GameController {
         String content = null;
 
         Message message = (Message) request.getAttribute("message");
+        String targetUrl = MessageUtil.buildTargetUrl(message);
 
 
         if ("返回菜单".equals(message.getContent())) {
@@ -117,12 +123,15 @@ public class GameController {
         if(image != null){
             param.put("image",image);
         }
+        if(content.isEmpty()){
+            content = "不理解您的指令呢";
+        }
 
         param.put("content", content);
         param.put("msg_id", message.getId());
 
         HttpUtil.executeRequest(
-                BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages",
+                targetUrl,
                 HttpMethod.POST,
                 param,
                 robotInfo.getHeaders());

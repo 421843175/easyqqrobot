@@ -59,15 +59,7 @@ public class ChatService {
             headers[0] = new BasicHeader("Authorization", "QQBot " + BaseVar.token);
             headers[1] = new BasicHeader("X-Union-Appid", robotInfo.getAppId());
 
-            String targetUrl;
-            //判断是群聊还是频道
-            if (Strings.isBlank(message.getChannel_id())){
-                targetUrl = BaseVar.BASE_URL + "/v2/groups/" + message.getGroup_openid() + "/messages";
-            }else {
-                targetUrl = BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages";
-            }
-
-
+            String targetUrl = MessageUtil.buildTargetUrl(message);
 
             Integer answerLength = robotInfo.getAnswerLength();
 
