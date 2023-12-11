@@ -98,6 +98,7 @@ public class MessageUtil {
             if (Objects.nonNull(messageDto.getContent())) {
                 log.info("{}",messageDto);
                 HttpUtil.executeRequest(
+                        //TODO:核心 将请求转发给自己的/router下面的接口
                         BaseVar.LOCAL_URL + "/router",
                         HttpMethod.POST,
                         (JSONObject) JSONObject.toJSON(messageDto)

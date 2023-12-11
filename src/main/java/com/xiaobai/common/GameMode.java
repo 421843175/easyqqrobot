@@ -14,6 +14,7 @@ public enum GameMode {
     JLDL("{\"精灵大陆\":\"/jldl\"}"),
     CYJL("{\"成语接龙\":\"/cyjl\"}"),
     NHWC("{\"你画我猜\":\"/nnwc\"}");
+    //TODO:增加新的游戏模式
 
     final String game;
 

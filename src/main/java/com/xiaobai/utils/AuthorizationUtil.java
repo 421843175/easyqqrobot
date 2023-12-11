@@ -66,7 +66,7 @@ public class AuthorizationUtil {
         BaseVar.WS_URL = url;
         //获取连接
         WebSocketClient client = new QQWebSocketClient(new URI(url));
-        client.connect();
+        client.connect();   //进行wbesocket连接
 
     }
 

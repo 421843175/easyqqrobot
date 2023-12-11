@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.net.URISyntaxException;
 
-import static java.lang.StringTemplate.STR;
+//import static java.lang.StringTemplate.STR;
 
 @SpringBootApplication
 @EnableScheduling

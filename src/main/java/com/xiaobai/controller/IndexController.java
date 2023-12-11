@@ -47,6 +47,7 @@ public class IndexController {
                 .trim());
         request.setAttribute("message", message);
 
+        //设置了模式走社子和的模式
         if (BaseVar.curMode != null) {
             url.append(BaseVar.curMode.getMode());
             if(BaseVar.gameMode != null){
@@ -66,6 +67,7 @@ public class IndexController {
         String mode = message.getContent().split(" ")[0];
 
 
+        //没设置模式
         if (Arrays.stream(RobotMode.values()).anyMatch(robotMode -> {
             if (robotMode.getMode().equals(mode)) {
                 BaseVar.curMode = robotMode;

@@ -44,6 +44,7 @@ public class QQWebSocketClient extends WebSocketClient {
             if(map.containsKey("arg")){
                 try {
                     Method method = this.getClass().getMethod((String) map.get("arg"));
+                    //调用方法（arg传值）  debug发现可以是 keepAlive
                     method.invoke(this);
                     return;
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {

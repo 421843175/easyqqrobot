@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
  * @date 2023/10/24-15:33
  */
 @Component
+//ApplicationRunner 它是Spring Boot中用于在Spring应用程序启动完成后执行特定任务的接口。
 public class StartWSConfig implements ApplicationRunner {
 
     @Autowired

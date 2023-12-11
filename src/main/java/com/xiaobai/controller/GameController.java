@@ -59,6 +59,7 @@ public class GameController {
         JSONObject param = new JSONObject();
         StringBuilder builder = new StringBuilder();
         Message message = (Message) request.getAttribute("message");
+//        String endmessage = message.getContent().replace("/game ", "");
 
         String targetUrl = MessageUtil.buildTargetUrl(message);
 
@@ -76,7 +77,7 @@ public class GameController {
                 builder.append("\n");
             }
 
-
+            this.jldl(request);
             builder.append("请@我说出想玩的游戏\n");
             builder.append("其他游戏还在开发中，会陆续上架。如果想退出游戏模式，请发送“退出游戏”");
 
@@ -103,10 +104,9 @@ public class GameController {
         Message message = (Message) request.getAttribute("message");
         String targetUrl = MessageUtil.buildTargetUrl(message);
 
-
         if ("返回菜单".equals(message.getContent())) {
             content = "精灵大陆已退出";
-            BaseVar.gameMode = null;
+            BaseVar.gameMode=null;
         } else if("菜单".equals(message.getContent())){
             StringBuilder builder = new StringBuilder();
 
@@ -115,9 +115,15 @@ public class GameController {
             builder.append("想返回主菜单吗，请发送“返回菜单”");
             image = "https://img1.baidu.com/it/u=198137113,2555698160&fm=253&fmt=auto&app=138&f=PNG?w=562&h=468";
             content = builder.toString();
-        }else {
+        }else if("签到".equals(message.getContent())) {
             content = jldlService.buildAnswer(message);
             image = jldlService.getImage(content);
+        }else if("我的积分".equals(message.getContent())) {
+            content= jldlService.buildAnswer(message);
+            image = jldlService.getImage(content);
+        }else
+        {
+            content="您目前所在游戏模式 查看菜单请发送指令 菜单 \n 返回游戏菜单请发送 返回菜单 \n 想退出游戏模式，请发送\"退出游戏\"";
         }
         //http://img.faloo.com/Novel/498x705/0/271/000271725.jpg
         if(image != null){
@@ -128,7 +134,10 @@ public class GameController {
         }
 
         param.put("content", content);
+
         param.put("msg_id", message.getId());
+
+        //修改id
 
         HttpUtil.executeRequest(
                 targetUrl,

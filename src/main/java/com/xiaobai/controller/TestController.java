@@ -29,42 +29,58 @@ public class TestController {
 
     @RequestMapping
     public void test(HttpServletRequest request){
-        JSONObject param = new JSONObject();
-        Header[] headers = new Header[2];
-        headers[0] = new BasicHeader("Authorization", "QQBot " + BaseVar.token);
-        headers[1] = new BasicHeader("X-Union-Appid", robotInfo.getAppId());
-
         Message message = (Message) request.getAttribute("message");
+        JSONObject param = new JSONObject();
+        MessageReference messageReference = new MessageReference();
+        messageReference.setMessage_id(message.getId());
 
-        param.put("msg_id", message.getId());
+        param.put("message_reference",messageReference);
 
-        InlineKeyboard keyboard = new InlineKeyboard(
-                new InlineKeyboardRow[]{
-                        new InlineKeyboardRow(
-                                new Button[]{
-                                        new Button("1",new RenderData(
-                                                "测试按钮","已点击",1
-                                        ),new Action(1,new Permission(
-                                                1,null,null
-                                        ),1,"按钮已被点击",false))
-                                }
-                        )
-                }
-        ,"102071706");
-        System.out.println(JSONObject.toJSON(keyboard));
+        param.put("content","测试");
+        param.put("msg_id",message.getId());
 
-
-
-        //引用消息
-        //param.put("content", "现在是测试模式哦");
-
-        Map map = HttpUtil.executeRequest(
-                BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages",
-                HttpMethod.POST,
-                (JSONObject) JSONObject.toJSON(keyboard),
-                headers
-        );
-        System.out.println(map);
+        HttpUtil.executeRequest(BaseVar.BASE_URL+"/channels/"+message.getChannel_id()+"/messages", HttpMethod.POST,param,
+                robotInfo.getHeaders());
     }
+
+//    @RequestMapping
+//    public void test(HttpServletRequest request){
+//        JSONObject param = new JSONObject();
+//        Header[] headers = new Header[2];
+//        headers[0] = new BasicHeader("Authorization", "QQBot " + BaseVar.token);
+//        headers[1] = new BasicHeader("X-Union-Appid", robotInfo.getAppId());
+//
+//        Message message = (Message) request.getAttribute("message");
+//
+//        param.put("msg_id", message.getId());
+//
+//        InlineKeyboard keyboard = new InlineKeyboard(
+//                new InlineKeyboardRow[]{
+//                        new InlineKeyboardRow(
+//                                new Button[]{
+//                                        new Button("1",new RenderData(
+//                                                "测试按钮","已点击",1
+//                                        ),new Action(1,new Permission(
+//                                                1,null,null
+//                                        ),1,"按钮已被点击",false))
+//                                }
+//                        )
+//                }
+//        ,"102071706");
+//        System.out.println(JSONObject.toJSON(keyboard));
+//
+//
+//
+//        //引用消息
+//        //param.put("content", "现在是测试模式哦");
+//
+//        Map map = HttpUtil.executeRequest(
+//                BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages",
+//                HttpMethod.POST,
+//                (JSONObject) JSONObject.toJSON(keyboard),
+//                headers
+//        );
+//        System.out.println(map);
+//    }
 
 }

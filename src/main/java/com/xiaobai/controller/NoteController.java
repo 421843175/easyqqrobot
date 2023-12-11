@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/note")
 public class NoteController {
 
+    //TODO:note模式的controller
     @Autowired
     RobotInfo robotInfo;
     @RequestMapping

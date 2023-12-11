@@ -12,6 +12,7 @@ public enum RobotMode {
     CHAT("/chat"),
     GAME("/game"),
     TEST("/test"),
+    //TODO: 增加新的模式，走相应的controller
     NOTE("/note");
 
     final String mode;

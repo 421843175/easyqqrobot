@@ -1,6 +1,7 @@
 package com.xiaobai.service;
 
 import com.xiaobai.pojo.qqRobot.Message;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,21 +10,38 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class JldlService {
-    boolean flag = true;
+
+    @Autowired
+    private PointsService pointsService;
+
+    @Autowired
+    private SignService signService;
 
     public String buildAnswer(Message message) {
+        String mess = message.getContent().replace("/game ", "");
         StringBuilder builder = new StringBuilder();
-        switch (message.getContent()) {
-            case "签到" -> {
-                Integer day = 1;
-                if (flag) {
-                    builder.append("签到成功\n").append("你已连续签到").append(day).append("天");
-                    builder.append("获得").append(((int) (Math.random() * 200) + 800) + "代币");
-                    flag = false;
+        switch (mess) {
+            case "签到": {
+                int resultday = signService.toSign(message.getAuthor().getId());
+                if (resultday!=-1) {
+                    //数据写入数据库
+                    Integer points= (int) (Math.random() * 100) + 20;
+                    pointsService.addPoints(message.getAuthor().getId(), points, 0);
+
+                    builder.append("签到成功\n").append("你已连续签到").append(resultday).append("天");
+
+                    builder.append("获得").append(points + "代币\n");
+
                 } else {
-                    builder.append("你今天已经签到过了！\n不要重复签到哦");
+                    builder.append("你今天已经签到过了！\n不要重复签到哦\n");
+                    break;
                 }
+                //这个地方就不加break了
             }
+            case "我的积分":{
+                builder.append("你的积分为：").append(pointsService.getPoints(message.getAuthor().getId()));
+            }
+
         }
         return builder.toString();
     }

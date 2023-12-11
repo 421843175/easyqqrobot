@@ -26,5 +26,4 @@ public class ChatController {
         Message message = (Message) request.getAttribute("message");
         chatService.channel(message);
     }
-
 }

@@ -7,7 +7,7 @@ logging:
 #        "1": "客户端或服务端发送心跳"
 #        "2": "客户端发送鉴权"
 #        "6": "客户端恢复连接"
-#        "7": "服务端通知客户端重新连接"
+#        "7": "服务端通知客户端重新连接"w
 #        "9": " identify 或 resume ，参数有误"
 #        "10": "hello"
 #        "11": "心跳成功"
@@ -16,13 +16,22 @@ robot:
     appId: "102071706"
     token:  "IyR82xXaf6sA24LkDtIU4abw0yA1DjDl"
     clientSecret: "Y0UmrmTXYR6d6QWN"
+    intents: 1107296256
+#    1＜＜25是接收群聊消息 1＜＜30是接收频道消息  1＜＜25|1＜＜30
     #机器人回答长度
     answerLength: 500
-    intents: 1107296256
 spark:
-    hostUrl: "https://spark-api.xf-yun.com/v2.1/chat"
+    hostUrl: "https://spark-api.xf-yun.com/v1.1/chat"
     apiKey: "93517e5e21d7eb0f734dcb5dd946f109"
     apiSecret: "ODM0MDhlOTE0MjcwNDBlYTUwZmExNjM0"
     appId: "d2f02e80"
-    domain: "generalv2"
-
+    domain: "general"
+server:
+    port: 8081
+spring:
+    datasource:
+        #    zeroDateTimeBehavior 地址可以是空的
+        url: jdbc:mysql://101.43.171.39:3306/XiaoBaiBaiRobot?serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL
+        username: root
+        password: "jupiter0216"
+        driver-class-name: com.mysql.jdbc.Driver
