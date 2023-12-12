@@ -9,6 +9,7 @@ import com.xiaobai.dto.MessageDto;
 import com.xiaobai.mapping.AnswerMapper;
 import com.xiaobai.pojo.entity.AnswerBean;
 import com.xiaobai.pojo.qqRobot.Message;
+import com.xiaobai.pojo.qqRobot.MessageReference;
 import com.xiaobai.service.PointsService;
 import com.xiaobai.service.SignService;
 import com.xiaobai.utils.HttpUtil;
@@ -107,6 +108,11 @@ public class JldlService implements GameService {
         /*if(image != null){
             param.put("image",image);
         }*/
+
+        MessageReference messageReference = new MessageReference();
+        messageReference.setMessage_id(message.getId());
+        param.put("message_reference", messageReference);
+
         param.put("content", content);
         param.put("msg_id", message.getId());
 
