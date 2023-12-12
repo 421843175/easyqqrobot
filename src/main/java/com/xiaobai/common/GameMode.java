@@ -11,15 +11,17 @@ import java.util.Map;
  */
 @Getter
 public enum GameMode {
-    JLDL("{\"精灵大陆\":\"/jldl\"}"),
-    CYJL("{\"成语接龙\":\"/cyjl\"}"),
-    NHWC("{\"你画我猜\":\"/nnwc\"}");
+    JLDL("精灵大陆","/jldl"),
+    CYJL("成语接龙","cyjl"),
+    NHWC("你画我猜","/nhwc");
     //TODO:增加新的游戏模式
 
-    final String game;
+    final String gameName;
+    final String gameUrl;
 
-    GameMode(String s) {
-        this.game = s;
+    GameMode(String gameName,String gameUrl) {
+        this.gameName = gameName;
+        this.gameUrl = gameUrl;
     }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,8 +61,5 @@ public class RobotService {
         return JSONObject.toJSONString(payload);
     }
 
-    public static void main(String[] args) {
-        System.out.println(1<<30|1<<25);
-    }
 
 }

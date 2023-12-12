@@ -151,13 +151,11 @@ public class MessageUtil {
         return requestJson;
     }
 
-    public static String buildTargetUrl(Message message){
-        String targetUrl;
+    public static void buildTargetUrl(MessageDto message){
         if (Strings.isBlank(message.getChannel_id())){
-            targetUrl = BaseVar.BASE_URL + "/v2/groups/" + message.getGroup_openid() + "/messages";
+            message.setTargetUrl(BaseVar.BASE_URL + "/v2/groups/" + message.getGroup_openid() + "/messages");
         }else {
-            targetUrl = BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages";
+            message.setTargetUrl(BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages");
         }
-        return targetUrl;
     }
 }

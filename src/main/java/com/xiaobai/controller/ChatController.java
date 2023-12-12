@@ -1,5 +1,6 @@
 package com.xiaobai.controller;
 
+import com.xiaobai.dto.MessageDto;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class ChatController {
      */
     @RequestMapping
     public void channel(HttpServletRequest request){
-        Message message = (Message) request.getAttribute("message");
-        chatService.channel(message);
+        MessageDto message = (MessageDto) request.getAttribute("message");
+        chatService.chat(message);
     }
 }

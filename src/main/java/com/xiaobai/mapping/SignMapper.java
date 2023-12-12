@@ -2,8 +2,7 @@ package com.xiaobai.mapping;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.xiaobai.dao.SignBean;
-import com.xiaobai.dao.UserBean;
+import com.xiaobai.pojo.entity.SignBean;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

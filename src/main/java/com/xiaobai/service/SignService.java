@@ -1,8 +1,7 @@
 package com.xiaobai.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.xiaobai.dao.SignBean;
-import com.xiaobai.dao.UserBean;
+import com.xiaobai.pojo.entity.SignBean;
 import com.xiaobai.mapping.SignMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

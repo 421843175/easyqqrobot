@@ -3,6 +3,7 @@ package com.xiaobai.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.xiaobai.common.BaseVar;
 import com.xiaobai.common.RobotInfo;
+import com.xiaobai.dto.MessageDto;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.pojo.qqRobot.MessageReference;
 import com.xiaobai.utils.HttpUtil;
@@ -28,9 +29,8 @@ public class NoteController {
     RobotInfo robotInfo;
     @RequestMapping
     public void write(HttpServletRequest request) {
-        Message message = (Message) request.getAttribute("message");
+        MessageDto message = (MessageDto) request.getAttribute("message");
 
-        String targetUrl = MessageUtil.buildTargetUrl(message);
 
         JSONObject param = new JSONObject();
 
@@ -43,7 +43,7 @@ public class NoteController {
         param.put("msg_id", message.getId());
 
         HttpUtil.executeRequest(
-                targetUrl,
+                message.getTargetUrl(),
                 HttpMethod.POST,
                 param,
                 robotInfo.getHeaders()

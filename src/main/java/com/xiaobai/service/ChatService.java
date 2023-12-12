@@ -4,13 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.xiaobai.common.BaseVar;
 import com.xiaobai.common.RobotInfo;
 import com.xiaobai.common.SparkInfo;
+import com.xiaobai.dto.MessageDto;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.pojo.qqRobot.MessageReference;
 import com.xiaobai.utils.AuthorizationUtil;
 import com.xiaobai.utils.HttpUtil;
 import com.xiaobai.utils.MessageUtil;
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
 import org.apache.logging.log4j.util.Strings;
 import org.java_websocket.client.WebSocketClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class ChatService {
         this.sparkInfo = sparkInfo;
     }
 
-    public void channel(Message message) {
+    public void chat(MessageDto message) {
         try {
             WebSocketClient sparkWSClient = AuthorizationUtil.getSparkWSClient(sparkInfo.getHostUrl(), sparkInfo.getApiKey(), sparkInfo.getApiSecret());
             sparkWSClient.connect();
@@ -55,65 +54,25 @@ public class ChatService {
 
             sparkWSClient.close(1000, "");
 
-            Header[] headers = new Header[2];
-            headers[0] = new BasicHeader("Authorization", "QQBot " + BaseVar.token);
-            headers[1] = new BasicHeader("X-Union-Appid", robotInfo.getAppId());
 
-            String targetUrl = MessageUtil.buildTargetUrl(message);
+            JSONObject param = new JSONObject();
+            StringBuilder builder = new StringBuilder("\n");
 
-            Integer answerLength = robotInfo.getAnswerLength();
+            param.put("msg_id", message.getId());
+            builder.append(BaseVar.sparkMessage);
+            //引用消息
+            param.put("content", builder.toString());
+            MessageReference messageReference = new MessageReference();
+            messageReference.setMessage_id(message.getId());
+            param.put("message_reference", messageReference);
 
-            if (BaseVar.sparkMessage.length() > answerLength) {
-                int index = BaseVar.sparkMessage.length() / answerLength;
-                int i = 0;
-                String answer;
-                while (i++ <= index) {
-                    if (i > index) {
-                        answer = BaseVar.sparkMessage.substring(answerLength * index);
-                    } else {
-                        answer = BaseVar.sparkMessage.substring(answerLength * (i - 1), answerLength * i);
-                    }
+            HttpUtil.executeRequest(
+                    message.getTargetUrl(),
+                    HttpMethod.POST,
+                    param,
+                    robotInfo.getHeaders()
+            );
 
-                    JSONObject param = new JSONObject();
-                    if (i == 1) {
-                        answer = "<@!" + message.getAuthor().getId() + ">\n" + answer;
-                        //引用消息
-                        MessageReference messageReference = new MessageReference();
-                        messageReference.setMessage_id(message.getId());
-                        param.put("message_reference", messageReference);
-                    }
-
-
-                    param.put("content", answer);
-                    param.put("msg_id", message.getId());
-
-                    HttpUtil.executeRequest(
-                            targetUrl,
-                            HttpMethod.POST,
-                            param,
-                            headers
-                    );
-                }
-            }else {
-                JSONObject param = new JSONObject();
-                StringBuilder builder = new StringBuilder("<@!" + message.getAuthor().getId() + ">\n");
-
-
-                param.put("msg_id", message.getId());
-                builder.append(BaseVar.sparkMessage);
-                //引用消息
-                param.put("content", builder.toString());
-                MessageReference messageReference = new MessageReference();
-                messageReference.setMessage_id(message.getId());
-                param.put("message_reference", messageReference);
-
-                HttpUtil.executeRequest(
-                        targetUrl,
-                        HttpMethod.POST,
-                        param,
-                        headers
-                );
-            }
 
             BaseVar.sparkMessage = null;
             BaseVar.curMode = null;

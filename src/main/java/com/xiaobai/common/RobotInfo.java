@@ -22,8 +22,5 @@ public class RobotInfo {
     @Value("${robot.clientSecret}")
     private  String clientSecret;
 
-    @Value("${robot.answerLength}")
-    private  Integer answerLength;
-
     private Header[] headers;
 }
