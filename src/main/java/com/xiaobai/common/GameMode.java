@@ -11,7 +11,7 @@ import java.util.Map;
  */
 @Getter
 public enum GameMode {
-    JLDL("精灵大陆","/jldl"),
+    MSDL("魔兽大陆","/msdl"),
     CYJL("成语接龙","cyjl"),
     NHWC("你画我猜","/nhwc");
     //TODO:增加新的游戏模式

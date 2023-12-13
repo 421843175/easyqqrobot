@@ -5,7 +5,7 @@ import com.xiaobai.common.BaseVar;
 import com.xiaobai.common.GameMode;
 import com.xiaobai.common.RobotInfo;
 import com.xiaobai.dto.MessageDto;
-import com.xiaobai.service.game.JldlService;
+import com.xiaobai.service.game.MsdlService;
 import com.xiaobai.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -28,7 +28,7 @@ public class GameController {
     RobotInfo robotInfo;
 
     @Autowired
-    JldlService jldlService;
+    MsdlService jldlService;
 
     static Map<String, GameMode> gameName = new ConcurrentHashMap<>();
 
@@ -76,8 +76,8 @@ public class GameController {
 
     }
 
-    @RequestMapping("/jldl")
-    public void jldl(HttpServletRequest request) {
+    @RequestMapping("/msdl")
+    public void msdl(HttpServletRequest request) {
         MessageDto message = (MessageDto) request.getAttribute("message");
         jldlService.playGame(message);
 

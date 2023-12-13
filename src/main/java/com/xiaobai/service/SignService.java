@@ -28,12 +28,14 @@ public class SignService {
             else if(resultday==2){
                 Integer signnum=signBean.getSigned()+ 1;
                 signBean.setSigned(signnum);
+                signBean.setSignedtime(new Date());
                 signMapper.update(signBean,wrapper );
                 return signnum;
             }
             else{
                 //不是今天不是昨天
                 signBean.setSigned(0);
+                signBean.setSignedtime(new Date());
                 signMapper.update(signBean,wrapper );
                 return 1;
             }

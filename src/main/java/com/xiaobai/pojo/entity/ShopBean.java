@@ -1,5 +1,6 @@
 package com.xiaobai.pojo.entity;
 
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -10,20 +11,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user")
-public class UserBean {
+@TableName("shop")
+public class ShopBean {
     @TableId(type = IdType.AUTO)
-    private Integer id;
-    private String userid;
-    private double points;
-    /*
-    * -1  管理
-    * 0  普通用户
-    * 1 VIP
-    * 2 SVIP
-    * */
-    private Integer power;
-
-
-
+    private int id;
+    private String tradname;
+    private String info;
+    private String bufferinfo;
+    private int num;
+    private double price;
 }

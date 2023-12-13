@@ -1,6 +1,7 @@
 package com.xiaobai.service.game;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.xiaobai.common.BaseVar;
@@ -8,15 +9,18 @@ import com.xiaobai.common.RobotInfo;
 import com.xiaobai.dto.MessageDto;
 import com.xiaobai.mapping.AnswerMapper;
 import com.xiaobai.pojo.entity.AnswerBean;
+import com.xiaobai.pojo.entity.ShopBean;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.pojo.qqRobot.MessageReference;
 import com.xiaobai.service.PointsService;
+import com.xiaobai.service.ShopBagService;
 import com.xiaobai.service.SignService;
 import com.xiaobai.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.sql.Wrapper;
 import java.util.Objects;
 
 /**
@@ -24,7 +28,7 @@ import java.util.Objects;
  * @date 2023/11/1-23:09
  */
 @Service
-public class JldlService implements GameService {
+public class MsdlService implements GameService {
 
     @Autowired
     private RobotInfo robotInfo;
@@ -34,6 +38,9 @@ public class JldlService implements GameService {
 
     @Autowired
     private SignService signService;
+
+    @Autowired
+    ShopBagService sbs;
 
     @Autowired
     private AnswerMapper answerMapper;
@@ -63,8 +70,27 @@ public class JldlService implements GameService {
                 builder.append("你的积分为：").append(pointsService.getPoints(message.getAuthor().getId()));
                 break;
             }
+            case "我的背包":{
+                builder.append(sbs.getBag(message.getAuthor().getId()));
+                break;
+            }
+            case "商城":{
+                builder.append(sbs.getShop());
+                break;
+            }
+            case "我的权限":{
+                builder.append(pointsService.getPower(message.getAuthor().getId()));
+                break;
+            }
+
             default:
-                builder.append("不理解您的指令哦,请发送“菜单”查看指令");
+                if(content.startsWith("购买")){
+                    String itemToBuy = content.substring(3); // 去除前面的"购买 "，得到购买的物品名称
+                    builder.append(sbs.buy(message.getAuthor().getId(),itemToBuy));
+                }else {
+                    builder.append("不理解您的指令哦,请发送“菜单”查看指令");
+                }
+
 
         }
         return builder.toString();

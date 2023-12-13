@@ -18,8 +18,6 @@ robot:
     clientSecret: "Y0UmrmTXYR6d6QWN"
     intents: 1107296256
 #    1＜＜25是接收群聊消息 1＜＜30是接收频道消息  1＜＜25|1＜＜30
-    #机器人回答长度
-    answerLength: 500
 spark:
     hostUrl: "https://spark-api.xf-yun.com/v1.1/chat"
     apiKey: "93517e5e21d7eb0f734dcb5dd946f109"
@@ -35,3 +33,4 @@ spring:
         username: root
         password: "jupiter0216"
         driver-class-name: com.mysql.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
