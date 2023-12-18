@@ -51,7 +51,9 @@ public class ShopBagService {
 
     public String getShop(){
         StringBuffer sb=new StringBuffer();
-        List<ShopBean> shopBeans = shopMapper.selectList(null);
+        QueryWrapper<ShopBean> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("isshow",1);
+        List<ShopBean> shopBeans = shopMapper.selectList(queryWrapper);
         for (ShopBean shopBean : shopBeans) {
                 sb.append(shopBean.getTradname()+"(售价:"+shopBean.getPrice()+" 积分 | 库存:"+shopBean.getNum()+" ):\n介绍:"+
                         shopBean.getInfo()+"\n附加属性:"+shopBean.getBufferinfo()+"\n\n");
@@ -66,6 +68,7 @@ public class ShopBagService {
         QueryWrapper<ShopBean> wrapper = new QueryWrapper<>();
         wrapper.eq("tradname", thing);
         ShopBean shopBean = shopMapper.selectOne(wrapper);
+        int traceid = shopBean.getId();
         if(shopBean!=null && shopBean.getNum()!=0){
             QueryWrapper<UserBean> queryWrapper=new QueryWrapper();
             queryWrapper.eq("userid",userid);
@@ -99,7 +102,7 @@ public class ShopBagService {
                     bagBeanQueryWrapper.eq("userid",userid);
                     BagBean bagBean = bagMapper.selectOne(bagBeanQueryWrapper);
                     if(bagBean==null){
-                        bagBean=new BagBean(null,userid,thing+"*1",null,null,null,null,null,null,null,null,null);
+                        bagBean=new BagBean(null,userid,traceid+"*1",null,null,null,null,null,null,null,null,null);
                         bagMapper.insert(bagBean);
                         return "购买成功";
                     }
@@ -110,7 +113,8 @@ public class ShopBagService {
                         if(t!=null && t.startsWith(thing)){
                             String[] ts = t.split("\\*");
                             int yournum=Integer.parseInt(ts[1])+1;
-                            setT(bagBean,i,thing+"*"+yournum);
+
+                            setT(bagBean,i,traceid+"*"+yournum);
                             bagMapper.update(bagBean,bagBeanQueryWrapper);
                             return "购买成功";
                         }
@@ -118,7 +122,7 @@ public class ShopBagService {
                     for(int i=1;i<=allcount;i++){
                         String t = getT(bagBean, i);
                         if(t==null){
-                            setT(bagBean,i,thing+"*"+1);
+                            setT(bagBean,i,traceid+"*"+1);
                             bagMapper.update(bagBean,bagBeanQueryWrapper);
                             return "购买成功";
                         }
@@ -144,11 +148,19 @@ public class ShopBagService {
         try {
             // 通过反射调用对应的getT方法
             Method method = bagBean.getClass().getMethod(methodName);
-            return (String) method.invoke(bagBean);
+            String thingnum = (String) method.invoke(bagBean);
+            String[] thingandnum = thingnum.split("\\*");
+            QueryWrapper<ShopBean> queryWrapper=new QueryWrapper<>();
+            queryWrapper.eq("id",Integer.parseInt(thingandnum[0]));
+            ShopBean shopBean = shopMapper.selectOne(queryWrapper);
+            if(shopBean!=null){
+                return shopBean.getTradname()+"*"+thingandnum[1];
+            }
         } catch (Exception e) {
             // 处理异常，例如方法不存在等情况
             return null;
         }
+        return null;
     }
     private void setT(BagBean bagBean, int index, String value) {
         // 根据index获取对应的setT方法

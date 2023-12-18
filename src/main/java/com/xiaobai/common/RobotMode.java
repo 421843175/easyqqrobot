@@ -13,7 +13,7 @@ public enum RobotMode {
     GAME("/game"),
     TEST("/test"),
     //TODO: 增加新的模式，走相应的controller
-    NOTE("/note");
+    Tools("/tools");
 
     final String mode;
 

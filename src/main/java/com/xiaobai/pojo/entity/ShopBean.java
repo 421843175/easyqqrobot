@@ -20,4 +20,5 @@ public class ShopBean {
     private String bufferinfo;
     private int num;
     private double price;
+    private int isshow;
 }
