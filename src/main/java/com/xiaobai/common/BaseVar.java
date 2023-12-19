@@ -18,8 +18,10 @@ public class BaseVar {
     /**
      *机器人模式
      */
+    //TODO:
     public static RobotMode curMode = null;
     public static GameMode gameMode = null;
+    public static boolean ischallengeBoss=false;
 
 
     public volatile static String sparkMessage = null;

@@ -11,8 +11,8 @@ import java.util.Map;
  */
 @Getter
 public enum GameMode {
-    MSDL("魔兽大陆","/msdl"),
-    XYX("小游戏","/xyx");  // 小游戏：彩票 井字棋 猜拳
+    MSDL("魔兽大陆","/msdl");
+//    XYX("小游戏","/xyx")  // 小游戏：彩票 井字棋 猜拳
     //TODO:增加新的游戏模式
 
     final String gameName;

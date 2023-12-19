@@ -20,7 +20,7 @@ public class PointsService {
             userMapper.update(userBean,wrapper );
             return true;
         }
-        userMapper.insert(new UserBean(null, userid, 500+points, power));
+        userMapper.insert(new UserBean(null, userid, 1000+points, power));
         return  true;
     }
 
@@ -31,7 +31,7 @@ public class PointsService {
         if(userBean!=null){
             return userBean.getPoints();
         }
-        return 500;
+        return 1000;
 
     }
 

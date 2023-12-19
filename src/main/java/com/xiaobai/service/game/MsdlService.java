@@ -12,6 +12,7 @@ import com.xiaobai.pojo.entity.AnswerBean;
 import com.xiaobai.pojo.entity.ShopBean;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.pojo.qqRobot.MessageReference;
+import com.xiaobai.service.MonsterService;
 import com.xiaobai.service.PointsService;
 import com.xiaobai.service.ShopBagService;
 import com.xiaobai.service.SignService;
@@ -21,6 +22,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.sql.Wrapper;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -44,6 +47,9 @@ public class MsdlService implements GameService {
 
     @Autowired
     private AnswerMapper answerMapper;
+
+    @Autowired
+    private MonsterService monsterService;
 
     public String buildAnswer(Message message) {
         String content = message.getContent();
@@ -82,12 +88,44 @@ public class MsdlService implements GameService {
                 builder.append(pointsService.getPower(message.getAuthor().getId()));
                 break;
             }
+            case "怪物挑战":{
+                builder.append(monsterService.getMonster());
+                break;
+            }
+            case "退出挑战":{
+                if(!BaseVar.ischallengeBoss){
+                    builder.append("您还没有开启挑战哦");
+                }else {
+                    BaseVar.ischallengeBoss=false;
+                    builder.append("退出成功!");
+                }
+
+            }
 
             default:
                 if(content.startsWith("购买")){
                     String itemToBuy = content.substring(3); // 去除前面的"购买 "，得到购买的物品名称
                     builder.append(sbs.buy(message.getAuthor().getId(),itemToBuy));
-                }else {
+                }
+//                怪物挑战
+                else if(content.startsWith("挑战")){
+                    if(BaseVar.ischallengeBoss){
+                        builder.append("您正在挑战中哦！");
+                    }else{
+                        String boss = content.substring(3); // 去除前面的"挑战 "，得到挑战怪物名称
+                        builder.append(monsterService.startAttackBoss(boss));
+                        BaseVar.ischallengeBoss=true;
+                    }
+
+                }
+                else if(content.startsWith("攻击") || content.startsWith("投掷") ||content.startsWith("使用")){
+                    if(BaseVar.ischallengeBoss){
+                        builder.append(monsterService.attackBoss(message.getAuthor().getId(),content));
+                    }else {
+                        builder.append("您还没有开启挑战哦");
+                    }
+                }
+                else {
                     builder.append("不理解您的指令哦,请发送“菜单”查看指令");
                 }
 
@@ -150,4 +188,6 @@ public class MsdlService implements GameService {
                 param,
                 robotInfo.getHeaders());
     }
+
+
 }

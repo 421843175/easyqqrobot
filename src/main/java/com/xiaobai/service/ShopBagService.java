@@ -40,8 +40,10 @@ public class ShopBagService {
         else{
             for(int i=0;i<=10;i++){
                 String thing = getT(bagBean, i);
-                if(thing!=null && !thing.equals(""))
-                sb.append((++sum)+":"+thing+"\n");
+                if(thing!=null && !thing.equals("")){
+                    if(thing.contains("*0"))continue;
+                    sb.append((++sum)+":"+thing+"\n");
+                }
             }
             return sb.toString();
 
@@ -55,7 +57,7 @@ public class ShopBagService {
         queryWrapper.eq("isshow",1);
         List<ShopBean> shopBeans = shopMapper.selectList(queryWrapper);
         for (ShopBean shopBean : shopBeans) {
-                sb.append(shopBean.getTradname()+"(售价:"+shopBean.getPrice()+" 积分 | 库存:"+shopBean.getNum()+" ):\n介绍:"+
+                sb.append(shopBean.getTradname()+"(售价:"+shopBean.getPrice()+" 积分 | 库存:无限"+" ):\n介绍:"+
                         shopBean.getInfo()+"\n附加属性:"+shopBean.getBufferinfo()+"\n\n");
         }
         return sb.toString();
@@ -141,7 +143,7 @@ public class ShopBagService {
         }
 
     }
-    private String getT(BagBean bagBean, int index) {
+    public String getT(BagBean bagBean, int index) {
         // 根据index获取对应的getT方法
         String methodName = "getT" + index;
 
@@ -162,7 +164,7 @@ public class ShopBagService {
         }
         return null;
     }
-    private void setT(BagBean bagBean, int index, String value) {
+    public void setT(BagBean bagBean, int index, String value) {
         // 根据index获取对应的setT方法
         String methodName = "setT" + index;
 
