@@ -1,6 +1,7 @@
 package com.xiaobai.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.xiaobai.common.BaseVar;
 import com.xiaobai.common.RobotInfo;
 import com.xiaobai.common.SparkInfo;
@@ -36,50 +37,52 @@ public class ChatService {
     }
 
     public void chat(MessageDto message) {
-        try {
-            WebSocketClient sparkWSClient = AuthorizationUtil.getSparkWSClient(sparkInfo.getHostUrl(), sparkInfo.getApiKey(), sparkInfo.getApiSecret());
-            sparkWSClient.connect();
+        JSONObject param = new JSONObject();
+        StringBuilder builder = new StringBuilder("\n");
 
-            do {
-                if (BaseVar.sparkFlag) {
-                    Map<String, Object> map = MessageUtil.buildSparkParam(sparkInfo.getAppId(),
-                            message.getAuthor().getId(),
-                            message.getContent().replaceAll("<@!.*?>", "").trim(),
-                            sparkInfo.getDomain());
-                    String sparkParam = JSONObject.toJSONString(map);
-                    sparkWSClient.send(sparkParam);
-                    BaseVar.sparkFlag = false;
-                }
-            } while (Strings.isBlank(BaseVar.sparkMessage));
+        if (StringUtils.isBlank(message.getContent())) {
+            builder.append("你不说和我聊什么，我怎么知道你要干嘛嘞");
+        } else {
+            try {
+                WebSocketClient sparkWSClient = AuthorizationUtil.getSparkWSClient(sparkInfo.getHostUrl(), sparkInfo.getApiKey(), sparkInfo.getApiSecret());
+                sparkWSClient.connect();
 
-            sparkWSClient.close(1000, "");
+                do {
+                    if (BaseVar.sparkFlag) {
+                        Map<String, Object> map = MessageUtil.buildSparkParam(sparkInfo.getAppId(),
+                                message.getAuthor().getId(),
+                                message.getContent().replaceAll("<@!.*?>", "").trim(),
+                                sparkInfo.getDomain());
+                        String sparkParam = JSONObject.toJSONString(map);
+                        sparkWSClient.send(sparkParam);
+                        BaseVar.sparkFlag = false;
+                    }
+                } while (Strings.isBlank(BaseVar.sparkMessage));
 
-
-            JSONObject param = new JSONObject();
-            StringBuilder builder = new StringBuilder("\n");
-
-            param.put("msg_id", message.getId());
-            builder.append(BaseVar.sparkMessage);
-            //引用消息
-            param.put("content", builder.toString());
-            MessageReference messageReference = new MessageReference();
-            messageReference.setMessage_id(message.getId());
-            param.put("message_reference", messageReference);
-
-            HttpUtil.executeRequest(
-                    message.getTargetUrl(),
-                    HttpMethod.POST,
-                    param,
-                    robotInfo.getHeaders()
-            );
+                sparkWSClient.close(1000, "");
 
 
-            BaseVar.sparkMessage = null;
-            BaseVar.curMode.get(message.getSrcId()).setGameMode(null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
+        param.put("msg_id", message.getId());
+        builder.append(BaseVar.sparkMessage);
+        //引用消息
+        param.put("content", builder.toString());
+        MessageReference messageReference = new MessageReference();
+        messageReference.setMessage_id(message.getId());
+        param.put("message_reference", messageReference);
+
+        HttpUtil.executeRequest(
+                message.getTargetUrl(),
+                HttpMethod.POST,
+                param,
+                robotInfo.getHeaders()
+        );
+        BaseVar.sparkMessage = null;
+        BaseVar.curMode.get(message.getSrcId()).setRobotMode(null);
 
     }
 
