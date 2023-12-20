@@ -59,7 +59,8 @@ public class IndexController {
 
 
         //设置了模式走设置的模式
-        if (BaseVar.curMode.get(message.getSrcId()) != null) {
+        if (BaseVar.curMode.get(message.getSrcId()) != null
+                && BaseVar.curMode.get(message.getSrcId()).getRobotMode() != null) {
             url.append(BaseVar.curMode.get(message.getSrcId()).getRobotMode().getModeUrl());
             if (BaseVar.curMode.get(message.getSrcId()).getGameMode() != null) {
                 url.append(BaseVar.curMode.get(message.getSrcId()).getGameMode().getGameUrl());
@@ -93,7 +94,7 @@ public class IndexController {
                     content.append(item.getMode()).append("\n");
                 }
             }else {
-                content.append("艾特我要说点我听得懂的话哦~\n比如:艾特我说“/tools”\n更多指令艾特我说‘菜单’哦\"");
+                content.append("艾特我要说点我听得懂的话哦~\n比如:艾特我说“/工具箱”\n更多指令艾特我说‘菜单’哦\"");
             }
 
             param.put("content", content);
