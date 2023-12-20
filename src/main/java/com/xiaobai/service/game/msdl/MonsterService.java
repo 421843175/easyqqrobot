@@ -1,4 +1,4 @@
-package com.xiaobai.service;
+package com.xiaobai.service.game.msdl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -83,7 +83,7 @@ public class MonsterService {
 
     }
 
-    public String attackBoss(String userid,String code){
+    public String attackBoss(String userid,String srcId ,String code){
         StringBuffer sb=new StringBuffer();
         int keyPosition = getKeyPosition(playheath, userid);
         if(keyPosition!=-1){
@@ -188,7 +188,7 @@ public class MonsterService {
             monsterMapper.update(monsterBean,monsterBeanQueryWrapper);
 
             //设置游戏状态为false
-            BaseVar.ischallengeBoss=false;
+            BaseVar.curMode.get(srcId).ischallengeBoss=false;
             sb.append("\n怪物寄了，掉落:"+reward+"积分!(已被存活玩家平分)");
 
 

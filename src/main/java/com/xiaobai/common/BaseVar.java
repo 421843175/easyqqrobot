@@ -1,6 +1,10 @@
 package com.xiaobai.common;
 
+import com.xiaobai.pojo.Mode;
+import lombok.Data;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author xiaobai
@@ -19,9 +23,9 @@ public class BaseVar {
      *机器人模式
      */
     //TODO:
-    public static RobotMode curMode = null;
-    public static GameMode gameMode = null;
-    public static boolean ischallengeBoss=false;
+    public static ConcurrentHashMap<String, Mode> curMode = new ConcurrentHashMap<>();
+
+
 
 
     public volatile static String sparkMessage = null;
@@ -33,5 +37,6 @@ public class BaseVar {
     public static final String TOKEN_URL = "https://bots.qq.com/app/getAppAccessToken";
     public static final String BASE_URL = "https://api.sgroup.qq.com";
     public static final String GATEWAY_URL = "/gateway";
+
 
 }

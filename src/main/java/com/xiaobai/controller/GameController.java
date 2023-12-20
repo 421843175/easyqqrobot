@@ -5,7 +5,7 @@ import com.xiaobai.common.BaseVar;
 import com.xiaobai.common.GameMode;
 import com.xiaobai.common.RobotInfo;
 import com.xiaobai.dto.MessageDto;
-import com.xiaobai.service.game.MsdlService;
+import com.xiaobai.service.game.msdl.MsdlService;
 import com.xiaobai.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -28,7 +28,7 @@ public class GameController {
     RobotInfo robotInfo;
 
     @Autowired
-    MsdlService jldlService;
+    MsdlService msdlService;
 
     static Map<String, GameMode> gameName = new ConcurrentHashMap<>();
 
@@ -46,12 +46,12 @@ public class GameController {
         MessageDto message = (MessageDto) request.getAttribute("message");
 
         if ("退出游戏".equals(message.getContent())) {
-            builder.append("游戏模式已退出\n还想找我玩的话。记得艾特我说“/game”");
-            BaseVar.curMode = null;
+            builder.append("游戏模式已退出\n还想找我玩的话。记得艾特我说“/游戏”");
+            BaseVar.curMode.get(message.getSrcId()).robotMode = null;
         } else if (gameName.containsKey(message.getContent())) {
-            BaseVar.gameMode = gameName.get(message.getContent());
+            BaseVar.curMode.get(message.getSrcId()).setGameMode(gameName.get(message.getContent()));
             builder.append("已加载游戏\t")
-                    .append(BaseVar.gameMode.getGameName())
+                    .append(BaseVar.curMode.get(message.getSrcId()).gameMode.getGameName())
                     .append("\n")
                     .append("准备好的话，艾特我发送“开始游戏”吧~");
         } else {
@@ -79,7 +79,7 @@ public class GameController {
     @RequestMapping("/msdl")
     public void msdl(HttpServletRequest request) {
         MessageDto message = (MessageDto) request.getAttribute("message");
-        jldlService.playGame(message);
+        msdlService.playGame(message);
 
     }
 }

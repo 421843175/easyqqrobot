@@ -75,7 +75,7 @@ public class ChatService {
 
 
             BaseVar.sparkMessage = null;
-            BaseVar.curMode = null;
+            BaseVar.curMode.get(message.getSrcId()).setGameMode(null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

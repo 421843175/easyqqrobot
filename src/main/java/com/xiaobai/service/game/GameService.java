@@ -1,6 +1,7 @@
 package com.xiaobai.service.game;
 
 import com.xiaobai.dto.MessageDto;
+import com.xiaobai.pojo.qqRobot.Message;
 
 /**
  * @author xiaobai
@@ -8,4 +9,5 @@ import com.xiaobai.dto.MessageDto;
  */
 public interface GameService {
     void playGame(MessageDto message);
+    String buildAnswer(MessageDto message);
 }

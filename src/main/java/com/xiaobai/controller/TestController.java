@@ -3,10 +3,12 @@ package com.xiaobai.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.xiaobai.common.BaseVar;
 import com.xiaobai.common.RobotInfo;
+import com.xiaobai.dto.MessageDto;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.pojo.qqRobot.MessageReference;
 import com.xiaobai.pojo.qqRobot.keyBoard.*;
 import com.xiaobai.utils.HttpUtil;
+import com.xiaobai.utils.MessageUtil;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,17 +31,25 @@ public class TestController {
 
     @RequestMapping
     public void test(HttpServletRequest request){
-        Message message = (Message) request.getAttribute("message");
+        MessageDto message = (MessageDto) request.getAttribute("message");
+        MessageUtil.buildTargetUrl(message);
+
         JSONObject param = new JSONObject();
         MessageReference messageReference = new MessageReference();
         messageReference.setMessage_id(message.getId());
 
         param.put("message_reference",messageReference);
 
+        if("退出".equals(message.getContent())){
+            BaseVar.curMode = null;
+        }
         param.put("content","测试");
         param.put("msg_id",message.getId());
 
-        HttpUtil.executeRequest(BaseVar.BASE_URL+"/channels/"+message.getChannel_id()+"/messages", HttpMethod.POST,param,
+        HttpUtil.executeRequest(
+                message.getTargetUrl(),
+                HttpMethod.POST,
+                param,
                 robotInfo.getHeaders());
     }
 

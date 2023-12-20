@@ -9,16 +9,20 @@ import lombok.ToString;
  */
 @Getter
 public enum RobotMode {
-    CHAT("/chat"),
-    GAME("/game"),
-    TEST("/test"),
+    CHAT("/聊天", "/chat", "聊天"),
+    GAME("/游戏", "/game", "玩游戏"),
+    TEST("/测试", "/test", "测试"),
     //TODO: 增加新的模式，走相应的controller
-    Tools("/tools");
+    TOOLS("/工具箱", "/tools", "工具箱");
 
     final String mode;
+    final String modeUrl;
+    final String modeName;
 
-    RobotMode(String s) {
+    RobotMode(String s, String modeUrl, String modeName) {
         this.mode = s;
+        this.modeName = modeName;
+        this.modeUrl = modeUrl;
     }
 
 }

@@ -153,8 +153,10 @@ public class MessageUtil {
 
     public static void buildTargetUrl(MessageDto message){
         if (Strings.isBlank(message.getChannel_id())){
+            message.setSrcId(message.getGroup_id());
             message.setTargetUrl(BaseVar.BASE_URL + "/v2/groups/" + message.getGroup_openid() + "/messages");
         }else {
+            message.setSrcId(message.getChannel_id());
             message.setTargetUrl(BaseVar.BASE_URL + "/channels/" + message.getChannel_id() + "/messages");
         }
     }

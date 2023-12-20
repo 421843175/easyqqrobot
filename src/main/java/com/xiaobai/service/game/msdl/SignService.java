@@ -1,4 +1,4 @@
-package com.xiaobai.service;
+package com.xiaobai.service.game.msdl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xiaobai.pojo.entity.SignBean;

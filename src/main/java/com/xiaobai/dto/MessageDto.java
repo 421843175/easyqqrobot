@@ -11,8 +11,18 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class MessageDto extends Message {
+    //来源id
+    String srcId;
 
     String forwardUrl;
 
     String targetUrl;
+
+    @Override
+    public String toString() {
+        return "MessageDto{" + super.toString() +
+                "forwardUrl='" + forwardUrl + '\'' +
+                ", targetUrl='" + targetUrl + '\'' +
+                '}';
+    }
 }

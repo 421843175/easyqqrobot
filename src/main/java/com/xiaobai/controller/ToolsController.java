@@ -35,9 +35,7 @@ public class ToolsController {
 
     @RequestMapping
     public void toolsinfo(HttpServletRequest request) {
-        BaseVar.curMode = RobotMode.Tools;
         MessageDto message = (MessageDto) request.getAttribute("message");
-
 
         JSONObject param = new JSONObject();
 
@@ -45,14 +43,13 @@ public class ToolsController {
         messageReference.setMessage_id(message.getId());
         param.put("message_reference", messageReference);
 
-        if (message.getContent().equals("")) {
-            param.put("content", "工具箱:\n1.随机一言\n2.历史上的今天\n3.百度热搜\n退出请输入 退出工具箱");
-        }
-        else if(message.getContent().equals("退出工具箱")){
-            BaseVar.curMode = null;
+        if ("".equals(message.getContent())) {
+            param.put("content", "\n工具箱:\n1.随机一言\n2.历史上的今天\n3.百度热搜\n退出请输入 退出工具箱");
+        } else if(message.getContent().equals("退出工具箱")){
+            BaseVar.curMode.get(message.getSrcId()).robotMode = null;
             param.put("content", "工具箱已退出");
         }else {
-            param.put("content",toolsService.toolsinfo(message));
+            param.put("content","\n" + toolsService.toolsinfo(message));
         }
 
 

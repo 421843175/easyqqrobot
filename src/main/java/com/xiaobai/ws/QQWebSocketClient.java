@@ -36,6 +36,7 @@ public class QQWebSocketClient extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
+        log.info("收到消息 -> \n{}",message);
         Map<String, Object> map = MessageUtil.parseQQPaylod(message);
         if(Objects.nonNull(map)){
             if(map.containsKey("arg")){

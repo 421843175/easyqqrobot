@@ -1,29 +1,20 @@
-package com.xiaobai.service.game;
+package com.xiaobai.service.game.msdl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.xiaobai.common.BaseVar;
 import com.xiaobai.common.RobotInfo;
 import com.xiaobai.dto.MessageDto;
 import com.xiaobai.mapping.AnswerMapper;
 import com.xiaobai.pojo.entity.AnswerBean;
-import com.xiaobai.pojo.entity.ShopBean;
 import com.xiaobai.pojo.qqRobot.Message;
 import com.xiaobai.pojo.qqRobot.MessageReference;
-import com.xiaobai.service.MonsterService;
-import com.xiaobai.service.PointsService;
-import com.xiaobai.service.ShopBagService;
-import com.xiaobai.service.SignService;
+import com.xiaobai.service.game.GameService;
 import com.xiaobai.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.sql.Wrapper;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -51,7 +42,7 @@ public class MsdlService implements GameService {
     @Autowired
     private MonsterService monsterService;
 
-    public String buildAnswer(Message message) {
+    public String buildAnswer(MessageDto message) {
         String content = message.getContent();
         StringBuilder builder = new StringBuilder();
         switch (content) {
@@ -93,10 +84,19 @@ public class MsdlService implements GameService {
                 break;
             }
             case "退出挑战":{
-                if(!BaseVar.ischallengeBoss){
+                if(!BaseVar.curMode.get(message.getSrcId()).ischallengeBoss){
                     builder.append("您还没有开启挑战哦");
                 }else {
-                    BaseVar.ischallengeBoss=false;
+                    BaseVar.curMode.get(message.getSrcId()).ischallengeBoss=false;
+                    builder.append("退出成功!");
+                }
+
+            }
+            case "打劫":{
+                if(!BaseVar.curMode.get(message.getSrcId()).ischallengeBoss){
+                    builder.append("您还没有开启挑战哦");
+                }else {
+                    BaseVar.curMode.get(message.getSrcId()).ischallengeBoss=false;
                     builder.append("退出成功!");
                 }
 
@@ -109,18 +109,18 @@ public class MsdlService implements GameService {
                 }
 //                怪物挑战
                 else if(content.startsWith("挑战")){
-                    if(BaseVar.ischallengeBoss){
+                    if(BaseVar.curMode.get(message.getSrcId()).ischallengeBoss){
                         builder.append("您正在挑战中哦！");
                     }else{
                         String boss = content.substring(3); // 去除前面的"挑战 "，得到挑战怪物名称
                         builder.append(monsterService.startAttackBoss(boss));
-                        BaseVar.ischallengeBoss=true;
+                        BaseVar.curMode.get(message.getSrcId()).ischallengeBoss=true;
                     }
 
                 }
                 else if(content.startsWith("攻击") || content.startsWith("投掷") ||content.startsWith("使用")){
-                    if(BaseVar.ischallengeBoss){
-                        builder.append(monsterService.attackBoss(message.getAuthor().getId(),content));
+                    if(BaseVar.curMode.get(message.getSrcId()).ischallengeBoss){
+                        builder.append(monsterService.attackBoss(message.getAuthor().getId(),message.getSrcId(),content));
                     }else {
                         builder.append("您还没有开启挑战哦");
                     }
@@ -147,21 +147,21 @@ public class MsdlService implements GameService {
     public void playGame(MessageDto message) {
         JSONObject param = new JSONObject();
         String image = null;
-        StringBuilder content = new StringBuilder("\n");
+        StringBuilder content = new StringBuilder("\n" + BaseVar.curMode.get(message.getSrcId()).getGameMode().getGameName() + "\n");
 
         AnswerBean answerBean = answerMapper.selectOne(Wrappers.<AnswerBean>lambdaQuery()
                 .select(AnswerBean::getAnswer)
                 .eq(AnswerBean::getKeyword, message.getContent())
                 .and(wrapper ->
-                        wrapper.eq(AnswerBean::getGame, BaseVar.gameMode.getGameName())
+                        wrapper.eq(AnswerBean::getGame, BaseVar.curMode.get(message.getSrcId()).getGameMode().getGameName())
                                 .or()
                                 .eq(AnswerBean::getGame, "ALL")
                 )
         );
         if (Objects.nonNull(answerBean)) {
             if ("已退出".equals(answerBean.getAnswer())) {
-                content.append(BaseVar.gameMode.getGameName()).append(answerBean.getAnswer());
-                BaseVar.gameMode = null;
+                content.append(BaseVar.curMode.get(message.getSrcId()).getGameMode().getGameName()).append(answerBean.getAnswer());
+                BaseVar.curMode.get(message.getSrcId()).setGameMode(null);
             }else {
                 content.append(answerBean.getAnswer());
             }

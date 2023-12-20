@@ -6,7 +6,9 @@ import com.xiaobai.common.RobotInfo;
 import com.xiaobai.common.RobotMode;
 import com.xiaobai.config.AnswerMethod;
 import com.xiaobai.dto.MessageDto;
+import com.xiaobai.pojo.Mode;
 import com.xiaobai.pojo.qqRobot.Message;
+import com.xiaobai.service.RobotService;
 import com.xiaobai.utils.HttpUtil;
 import com.xiaobai.utils.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,10 @@ public class IndexController {
     @Autowired
     RobotInfo robotInfo;
 
+    @Autowired
+    RobotService robotService;
+
+
     @RequestMapping("/router")
     public String router(@RequestBody MessageDto message, HttpServletRequest request) {
         log.info("路由控制器");
@@ -53,10 +59,10 @@ public class IndexController {
 
 
         //设置了模式走设置的模式
-        if (BaseVar.curMode != null) {
-            url.append(BaseVar.curMode.getMode());
-            if (BaseVar.gameMode != null) {
-                url.append(BaseVar.gameMode.getGameUrl());
+        if (BaseVar.curMode.get(message.getSrcId()) != null) {
+            url.append(BaseVar.curMode.get(message.getSrcId()).getRobotMode().getModeUrl());
+            if (BaseVar.curMode.get(message.getSrcId()).getGameMode() != null) {
+                url.append(BaseVar.curMode.get(message.getSrcId()).getGameMode().getGameUrl());
             }
 
             return "forward:" + url;
@@ -69,17 +75,28 @@ public class IndexController {
         //没设置模式
         if (Arrays.stream(RobotMode.values()).anyMatch(robotMode -> {
             if (robotMode.getMode().equals(mode)) {
-                BaseVar.curMode = robotMode;
+                BaseVar.curMode.put(message.getSrcId(),new Mode(robotMode));
                 return true;
             }
             return false;
         })) {
-            message.setForwardUrl(mode);
+            message.setForwardUrl(BaseVar.curMode.get(message.getSrcId()).getRobotMode().getModeUrl());
             message.setContent(message.getContent().replace(mode, ""));
         } else {
             JSONObject param = new JSONObject();
+            StringBuilder content = new StringBuilder("\n");
+            if("菜单".equals(message.getContent())){
+                for (RobotMode item : RobotMode.values()) {
+                    if("测试".equals(item.getModeName())){
+                        continue;
+                    }
+                    content.append(item.getMode()).append("\n");
+                }
+            }else {
+                content.append("艾特我要说点我听得懂的话哦~\n比如:艾特我说“/tools”\n更多指令艾特我说‘菜单’哦\"");
+            }
 
-            param.put("content", "小白白不知道你要干什么，请通过指令控制我叭");
+            param.put("content", content);
             param.put("msg_id", message.getId());
 
             HttpUtil.executeRequest(
