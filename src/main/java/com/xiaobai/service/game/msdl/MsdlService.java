@@ -107,6 +107,10 @@ public class MsdlService implements GameService {
                     String itemToBuy = content.substring(3); // 去除前面的"购买 "，得到购买的物品名称
                     builder.append(sbs.buy(message.getAuthor().getId(),itemToBuy));
                 }
+                else if(content.startsWith("查看")){
+                    String itemTo = content.substring(3); // 去除前面的"购买 "，得到购买的物品名称
+                    builder.append(sbs.see(itemTo));
+                }
 //                怪物挑战
                 else if(content.startsWith("挑战")){
                     if(BaseVar.curMode.get(message.getSrcId()).ischallengeBoss){
@@ -125,8 +129,9 @@ public class MsdlService implements GameService {
                         builder.append("您还没有开启挑战哦");
                     }
                 }
+
                 else {
-                    builder.append("不理解您的指令哦,请发送“菜单”查看指令");
+                    builder.append("不理解您的指令哦,请发送“菜单”查看指令\n若要退出魔兽大陆 请发送\"返回菜单\"");
                 }
 
 

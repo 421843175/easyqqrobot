@@ -40,10 +40,13 @@ public class ShopBagService {
         else{
             for(int i=0;i<=10;i++){
                 String thing = getT(bagBean, i);
-                if(thing!=null && !thing.equals("")){
-                    if(thing.contains("*0"))continue;
+                if(thing!=null && !thing.equals("null")){
+                    if(thing.contains("null"))continue;
                     sb.append((++sum)+":"+thing+"\n");
                 }
+            }
+            if(sb.toString().equals("")){
+                return "背包为空!";
             }
             return sb.toString();
 
@@ -57,9 +60,11 @@ public class ShopBagService {
         queryWrapper.eq("isshow",1);
         List<ShopBean> shopBeans = shopMapper.selectList(queryWrapper);
         for (ShopBean shopBean : shopBeans) {
-                sb.append(shopBean.getTradname()+"(售价:"+shopBean.getPrice()+" 积分 | 库存:无限"+" ):\n介绍:"+
-                        shopBean.getInfo()+"\n附加属性:"+shopBean.getBufferinfo()+"\n\n");
+//                sb.append(shopBean.getTradname()+"(售价:"+shopBean.getPrice()+" 积分 | 库存:无限"+" ):\n介绍:"+
+//                        shopBean.getInfo()+"\n附加属性:"+shopBean.getBufferinfo()+"\n\n");
+            sb.append(shopBean.getTradname()+"(售价:"+shopBean.getPrice()+" 积分 | 库存:无限"+" ):\n");
         }
+        sb.append("查看商品详情请输入\"查看 XXX\"(例如:查看 匕首)");
         return sb.toString();
     }
 
@@ -112,6 +117,7 @@ public class ShopBagService {
                     for(int i=1;i<=allcount;i++){
                         String t = getT(bagBean, i);
 
+                        //如果有相同的物品
                         if(t!=null && t.startsWith(thing)){
                             String[] ts = t.split("\\*");
                             int yournum=Integer.parseInt(ts[1])+1;
@@ -121,9 +127,10 @@ public class ShopBagService {
                             return "购买成功";
                         }
                     }
+                    //没有相同的物品
                     for(int i=1;i<=allcount;i++){
                         String t = getT(bagBean, i);
-                        if(t==null){
+                        if(t==null|| t.equals("null")){
                             setT(bagBean,i,traceid+"*"+1);
                             bagMapper.update(bagBean,bagBeanQueryWrapper);
                             return "购买成功";
@@ -186,4 +193,17 @@ public class ShopBagService {
     }
 
 
+    public String see(String itemTo) {
+        QueryWrapper<ShopBean> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("tradname",itemTo);
+        ShopBean shopBean = shopMapper.selectOne(queryWrapper);
+        if(shopBean==null)
+        {
+            return "抱歉，您输入的物品名有误无法查询到";
+        }
+        return   shopBean.getTradname()+"(售价:"+shopBean.getPrice()+" 积分 | 库存:无限"+" ):\n介绍:"+
+                shopBean.getInfo()+"\n附加属性:"+shopBean.getBufferinfo();
+
+
+    }
 }

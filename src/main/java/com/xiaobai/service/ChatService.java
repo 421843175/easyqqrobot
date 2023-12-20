@@ -68,6 +68,7 @@ public class ChatService {
         }
 
         param.put("msg_id", message.getId());
+        if(BaseVar.sparkMessage!=null)
         builder.append(BaseVar.sparkMessage);
         //引用消息
         param.put("content", builder.toString());

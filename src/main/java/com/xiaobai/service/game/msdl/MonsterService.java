@@ -48,6 +48,7 @@ public class MonsterService {
         for (MonsterBean monsterBean : monsterBeans) {
             sb.append(monsterBean.getName()+":(掉落:"+monsterBean.getReward()+"积分|冷却时间:"+monsterBean.getCool()+"分钟)\n"+monsterBean.getInfo()+"\n");
         }
+        sb.append("\n\n输入挑战 XXX开始挑战(例如:挑战 雷霆巨蝎)");
         return sb.toString();
     }
 
@@ -199,6 +200,7 @@ public class MonsterService {
     public String bossatack(){
         int math= (int) (Math.random()*10);
         int attak;
+        int yourattak;
         StringBuffer sbi=new StringBuffer();
         String keyAtIndex;
         if(math>=7){
@@ -213,9 +215,12 @@ public class MonsterService {
         for(int i=0;i<playheath.size();i++){
             //如果这个玩家有防御
             if(playDefense.containsKey(getKeyAtIndex(playheath,i))){
-               attak= attak-(attak*(playDefense.get(getKeyAtIndex(playheath,i))/100));
+               yourattak= attak-(playDefense.get(getKeyAtIndex(playheath,i))/2);
+                playheath.put(getKeyAtIndex(playheath,i),playheath.get(getKeyAtIndex(playheath,i))-yourattak);
+            }else {
+                playheath.put(getKeyAtIndex(playheath,i),playheath.get(getKeyAtIndex(playheath,i))-attak);
             }
-            playheath.put(getKeyAtIndex(playheath,i),playheath.get(getKeyAtIndex(playheath,i))-attak);
+
         }
 
         sbi.append("魔兽 使用了"+keyAtIndex+"攻击!\n对周围玩家普遍造成了"+attak+"攻击伤害");
@@ -283,21 +288,23 @@ public class MonsterService {
 
     //0 攻击 1投掷 2使用
     public BufferBean usething(String userid, String thing, int usemode){
+        boolean isHave=false;
 
         QueryWrapper<ShopBean> shopBeanQueryWrapper=new QueryWrapper<>();
         shopBeanQueryWrapper.eq("tradname",thing);
-        //背包是否有这个物品
-        ShopBean shopBean = shopMapper.selectOne(shopBeanQueryWrapper);
-        if(shopBean==null)
-            return null;
 
-        //消耗品的消耗
+        ShopBean shopBean = shopMapper.selectOne(shopBeanQueryWrapper);
+        QueryWrapper<BagBean> bagBeanQueryWrapper=new QueryWrapper<>();
+        bagBeanQueryWrapper.eq("userid",userid);
+        BagBean bagBean = bagMapper.selectOne(bagBeanQueryWrapper);
+
+
+
+        //消耗品的消耗 (投掷/使用)
         if(usemode!=0 || shopBean.getConsume()==1) {
 
             int traceid = shopBean.getId();
-            QueryWrapper<BagBean> bagBeanQueryWrapper=new QueryWrapper<>();
-            bagBeanQueryWrapper.eq("userid",userid);
-            BagBean bagBean = bagMapper.selectOne(bagBeanQueryWrapper);
+
             if(bagBean==null){
                 return null;
             }
@@ -307,17 +314,38 @@ public class MonsterService {
                 if(t!=null && t.startsWith(thing)){
                     String[] ts = t.split("\\*");
                     int yournum=Integer.parseInt(ts[1])-1;
-                    if(yournum<0){
-                        shopBagService.setT(bagBean,i,null);
-                        return null;
+                    if(yournum<=0){
+                        shopBagService.setT(bagBean,i,"null");
+//                        return null;
+                    }else{
+                        shopBagService.setT(bagBean,i,traceid+"*"+yournum);
                     }
-                    shopBagService.setT(bagBean,i,traceid+"*"+yournum);
+
                     bagMapper.update(bagBean,bagBeanQueryWrapper);
+                    isHave=true;
                     break;
                 }
             }
+            if(!isHave){
+                return null;
+            }
 
         }
+        //攻击性物品 背包是否有
+        else {
+            for(int i=1;i<=10;i++){
+                String t = shopBagService.getT(bagBean, i);
+                if(t!=null && t.startsWith(thing)){
+                    isHave=true;
+                    break;
+                }
+            }
+            if(!isHave){
+                return null;
+            }
+        }
+
+
         //对于bufferinfo的解读
         String bufferinfo = shopBean.getBufferinfo();
         String[] bufferarr = bufferinfo.split(",");
